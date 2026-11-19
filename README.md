@@ -32,7 +32,7 @@ git clone https://github.com/mameAmy466/framework.git
 Arguments : `<dossier> <code_groupe> [org] [couleur]`. Le script :
 
 - lance `flutter create` (android, ios, web) ;
-- ajoute la dépendance git `tve_kit` (version : `TVE_KIT_REF=v0.1.0`, défaut `main`) et le dossier `assets/images/` ;
+- ajoute la dépendance git `tve_kit` (version : `TVE_KIT_REF=<tag ou commit>`, défaut `main`) et le dossier `assets/images/` ;
 - écrit un `lib/main.dart` avec un bloc **VARIABLES** et un bloc **DESIGN** à compléter ;
 - configure Android (INTERNET, flux HTTP) et iOS (flux HTTP, audio en arrière-plan).
 
@@ -46,7 +46,7 @@ dependencies:
   tve_kit:
     git:
       url: https://github.com/mameAmy466/framework.git
-      ref: v0.1.0   # figez une version : une mise à jour du framework ne casse pas vos apps
+      ref: main   # en production, figez une version : un tag (ex. v0.1.0) ou un commit
 ```
 
 ## 2. Les variables — `TveConfig`
