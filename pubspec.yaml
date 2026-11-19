@@ -1,0 +1,32 @@
+name: tve_kit
+description: >-
+  Framework Flutter aCAN pour l'API TVE v3 (https://tveapi.acan.group/v3).
+  Client typé + modèles + écrans prêts à l'emploi. Une nouvelle app = un
+  TveConfig (variables) + un TveDesign (design).
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  video_player: ^2.9.0
+  just_audio: ^0.10.0
+  youtube_player_iframe: ^5.2.0
+  flutter_widget_from_html_core: ^0.16.0
+  cached_network_image: ^3.4.0
+  url_launcher: ^6.3.0
+  share_plus: ^12.0.0
+  google_fonts: ^6.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
