@@ -58,7 +58,10 @@ class _TveAppState extends State<TveApp> {
     final minDelay = Future<void>.delayed(widget.design.splashMinDuration);
     try {
       final g = await _api.getGroup();
-      await minDelay;
+      // Préchargement facultatif (ex. contenus de l'accueil), pendant le splash.
+      // Une erreur ici n'empêche pas d'ouvrir l'app : les écrans rechargeront.
+      final preload = widget.design.preload?.call(_api, g).catchError((Object _) {});
+      await Future.wait([minDelay, if (preload != null) preload]);
       if (mounted) setState(() => _group = g);
     } catch (e) {
       if (mounted) setState(() => _error = e);

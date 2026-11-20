@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -106,5 +107,44 @@ void main() {
     expect(TveYoutubePlayer.normalizeOrigin('https://www.ouest.tv/fr/'), 'https://www.ouest.tv');
     expect(TveYoutubePlayer.normalizeOrigin(''), isNull);
     expect(TveYoutubePlayer.normalizeOrigin(null), isNull);
+  });
+
+  testWidgets('preload est attendu pendant le splash', (tester) async {
+    final api = TveClient(
+      group: 'leraltv',
+      httpClient: MockClient(
+        (r) async => http.Response.bytes(
+          utf8.encode(File('test/fixtures/group.json').readAsStringSync()),
+          200,
+          headers: {'content-type': 'application/json'},
+        ),
+      ),
+    );
+    final done = Completer<void>();
+    String? seen;
+    await tester.pumpWidget(
+      TveApp(
+        client: api,
+        config: const TveConfig(group: 'leraltv'),
+        design: TveDesign(
+          splashMinDuration: Duration.zero,
+          preload: (api, group) {
+            seen = group.code;
+            return done.future;
+          },
+          homeBuilder: (_) => const Text('HOME', textDirection: TextDirection.ltr),
+        ),
+      ),
+    );
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 10));
+    }
+    expect(seen, 'leraltv');
+    expect(find.text('HOME'), findsNothing); // toujours sur le splash
+    done.complete();
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 10));
+    }
+    expect(find.text('HOME'), findsOneWidget);
   });
 }

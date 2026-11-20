@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../api/tve_client.dart';
+import '../models/group.dart';
 import 'tve_config.dart';
 
 /// Construit un écran de démarrage personnalisé (voir [TveDesign.splashBuilder]).
@@ -47,6 +49,11 @@ class TveDesign {
   /// par exemple `TveErrorView(error: error, onRetry: onRetry)`.
   final TveSplashBuilder? splashBuilder;
 
+  /// Travail lancé pendant le splash, une fois le groupe chargé (ex. précharger
+  /// les contenus de l'accueil). Le splash attend la fin de ce travail et de
+  /// [splashMinDuration]. Les erreurs sont ignorées.
+  final Future<void> Function(TveClient api, TveGroup group)? preload;
+
   /// Arrondi des cartes et vignettes.
   final double radius;
 
@@ -78,6 +85,7 @@ class TveDesign {
     this.splashImageAsset,
     this.splashMinDuration = const Duration(milliseconds: 1200),
     this.splashBuilder,
+    this.preload,
     this.radius = 12,
     this.icons = const {},
     this.screens = const {},

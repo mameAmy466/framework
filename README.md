@@ -95,6 +95,7 @@ flutter build apk --dart-define=TVE_GROUP=dtv --dart-define=TVE_APP_NAME="DTV S�
 | `logoAsset` | Logo local. Sans lui, l'app prend le logo de l'API |
 | `splashBackground` / `splashImageAsset` / `splashMinDuration` | Écran de démarrage |
 | `splashBuilder` | Écran de démarrage 100 % personnalisé `(context, error, onRetry)` |
+| `preload` | Préchargement pendant le splash `(api, group)`, ex. contenus de l'accueil |
 | `radius` | Arrondi des cartes |
 | `icons` | Icônes des onglets |
 | `screens` | **Remplacer l'écran d'une section** par le vôtre |
