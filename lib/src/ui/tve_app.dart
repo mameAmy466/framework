@@ -84,7 +84,7 @@ class _TveAppState extends State<TveApp> {
               design: d,
               group: g,
               sections: resolveSections(widget.config, g),
-              child: const TveHome(),
+              child: Builder(builder: d.homeBuilder ?? (_) => const TveHome()),
             ),
     );
   }
@@ -99,6 +99,8 @@ class _Splash extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final custom = design.splashBuilder;
+    if (custom != null) return custom(context, error, onRetry);
     final bg = design.splashBackground ?? Theme.of(context).colorScheme.surface;
     final img = design.splashImageAsset ?? design.logoAsset;
     return Scaffold(

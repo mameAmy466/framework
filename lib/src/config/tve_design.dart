@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'tve_config.dart';
 
+/// Construit un écran de démarrage personnalisé (voir [TveDesign.splashBuilder]).
+typedef TveSplashBuilder = Widget Function(BuildContext context, Object? error, VoidCallback onRetry);
+
 /// LE DESIGN D'UNE APP.
 ///
 /// Tout est optionnel : sans rien, l'app prend la couleur `branding.primary_color`
@@ -38,11 +41,22 @@ class TveDesign {
   /// Durée minimale du splash.
   final Duration splashMinDuration;
 
+  /// Splash 100 % personnalisé (remplace le splash par défaut).
+  ///
+  /// `error` est non nul si le chargement du groupe a échoué : affichez alors
+  /// par exemple `TveErrorView(error: error, onRetry: onRetry)`.
+  final TveSplashBuilder? splashBuilder;
+
   /// Arrondi des cartes et vignettes.
   final double radius;
 
   /// Icônes des onglets (surcharge).
   final Map<TveSection, IconData> icons;
+
+  /// Remplace la coquille de l'app (AppBar + barre d'onglets) par la vôtre,
+  /// par exemple une navigation par menu latéral. Construit sous [TveScope] :
+  /// `TveScope.of(context)` et `defaultSectionScreen(section)` sont utilisables.
+  final WidgetBuilder? homeBuilder;
 
   /// Remplace complètement l'écran d'une section par le vôtre.
   final Map<TveSection, WidgetBuilder> screens;
@@ -63,9 +77,11 @@ class TveDesign {
     this.splashBackground,
     this.splashImageAsset,
     this.splashMinDuration = const Duration(milliseconds: 1200),
+    this.splashBuilder,
     this.radius = 12,
     this.icons = const {},
     this.screens = const {},
+    this.homeBuilder,
     this.themeBuilder,
   });
 

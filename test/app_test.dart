@@ -50,4 +50,48 @@ void main() {
     expect(Theme.of(ctx).colorScheme.primary, const Color(0xFF0057B8));
     expect(TveScope.of(ctx).appName, 'MY APP');
   });
+
+  testWidgets('splashBuilder remplace le splash par défaut', (tester) async {
+    final api = TveClient(
+      group: 'leraltv',
+      httpClient: MockClient((r) async => http.Response('{}', 500)),
+    );
+    await tester.pumpWidget(TveApp(
+      client: api,
+      config: const TveConfig(group: 'leraltv'),
+      design: TveDesign(
+        splashMinDuration: Duration.zero,
+        splashBuilder: (context, error, onRetry) =>
+            Text(error == null ? 'MON SPLASH' : 'ERREUR', textDirection: TextDirection.ltr),
+      ),
+    ));
+    expect(find.text('MON SPLASH'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 10));
+    }
+    expect(find.text('ERREUR'), findsOneWidget);
+  });
+
+  testWidgets('homeBuilder remplace la coquille, sous TveScope', (tester) async {
+    final api = TveClient(
+      group: 'leraltv',
+      httpClient: MockClient((r) async => http.Response.bytes(
+          utf8.encode(File('test/fixtures/group.json').readAsStringSync()), 200,
+          headers: {'content-type': 'application/json'})),
+    );
+    await tester.pumpWidget(TveApp(
+      client: api,
+      config: const TveConfig(group: 'leraltv'),
+      design: TveDesign(
+        splashMinDuration: Duration.zero,
+        homeBuilder: (context) => Scaffold(body: Text('HOME ${TveScope.of(context).group.code}')),
+      ),
+    ));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 10));
+    }
+    expect(find.text('HOME leraltv'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+  });
 }

@@ -93,9 +93,11 @@ flutter build apk --dart-define=TVE_GROUP=dtv --dart-define=TVE_APP_NAME="DTV S�
 | `googleFont` / `fontFamily` | Police Google Fonts, ou police embarquée |
 | `logoAsset` | Logo local. Sans lui, l'app prend le logo de l'API |
 | `splashBackground` / `splashImageAsset` / `splashMinDuration` | Écran de démarrage |
+| `splashBuilder` | Écran de démarrage 100 % personnalisé `(context, error, onRetry)` |
 | `radius` | Arrondi des cartes |
 | `icons` | Icônes des onglets |
 | `screens` | **Remplacer l'écran d'une section** par le vôtre |
+| `homeBuilder` | Remplacer la coquille (AppBar + onglets), ex. navigation par menu latéral |
 | `themeBuilder` | Retouche libre du `ThemeData` généré |
 
 ```dart
