@@ -93,5 +93,11 @@ void main() {
     }
     expect(find.text('HOME leraltv'), findsOneWidget);
     expect(find.byType(NavigationBar), findsNothing);
+
+    // Une page poussée par le Navigator a aussi accès à TveScope.
+    final nav = Navigator.of(tester.element(find.text('HOME leraltv')));
+    nav.push(MaterialPageRoute<void>(builder: (c) => Text('PAGE ${TveScope.of(c).group.code}')));
+    await tester.pumpAndSettle();
+    expect(find.text('PAGE leraltv'), findsOneWidget);
   });
 }

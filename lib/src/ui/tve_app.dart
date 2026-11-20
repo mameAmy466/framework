@@ -76,16 +76,21 @@ class _TveAppState extends State<TveApp> {
       themeMode: d.themeMode,
       theme: d.theme(Brightness.light, apiPrimaryColor: api),
       darkTheme: d.theme(Brightness.dark, apiPrimaryColor: api),
-      home: g == null
-          ? _Splash(design: d, error: _error, onRetry: _load)
+      // TveScope au-dessus du Navigator : les pages poussées (détail vidéo,
+      // recherche, menus…) y ont accès, pas seulement l'écran d'accueil.
+      builder: (context, child) => g == null
+          ? child!
           : TveScope(
               api: _api,
               config: widget.config,
               design: d,
               group: g,
               sections: resolveSections(widget.config, g),
-              child: Builder(builder: d.homeBuilder ?? (_) => const TveHome()),
+              child: child!,
             ),
+      home: g == null
+          ? _Splash(design: d, error: _error, onRetry: _load)
+          : Builder(key: const ValueKey('tve-home'), builder: d.homeBuilder ?? (_) => const TveHome()),
     );
   }
 }
