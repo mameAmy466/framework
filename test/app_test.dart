@@ -100,4 +100,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('PAGE leraltv'), findsOneWidget);
   });
+
+  test('origine YouTube normalisée', () {
+    expect(TveYoutubePlayer.normalizeOrigin('www.acan.group'), 'https://www.acan.group');
+    expect(TveYoutubePlayer.normalizeOrigin('https://www.ouest.tv/fr/'), 'https://www.ouest.tv');
+    expect(TveYoutubePlayer.normalizeOrigin(''), isNull);
+    expect(TveYoutubePlayer.normalizeOrigin(null), isNull);
+  });
 }

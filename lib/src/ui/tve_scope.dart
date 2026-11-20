@@ -31,6 +31,9 @@ class TveScope extends InheritedWidget {
     return s!;
   }
 
+  /// Comme [of], mais renvoie null hors d'une app TVE.
+  static TveScope? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<TveScope>();
+
   TveStrings get strings => config.strings;
 
   String get appName => config.appName ?? group.branding.appName ?? group.name;

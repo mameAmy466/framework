@@ -5,6 +5,7 @@ class TveStrings {
   final String search, searchHint, noResults, empty, retry, loading, errorTitle, networkError;
   final String share, privacyPolicy, contact, followUs, version, developedBy;
   final String onAir, upNext, today, playbackUnavailable, playlists, allVideos, readMore;
+  final String watchOnYoutube, youtubeNotEmbeddable, youtubeError;
 
   const TveStrings({
     this.live = 'Direct',
@@ -36,5 +37,8 @@ class TveStrings {
     this.playlists = 'Playlists',
     this.allVideos = 'Toutes les vidéos',
     this.readMore = 'Lire la suite',
+    this.watchOnYoutube = 'Regarder sur YouTube',
+    this.youtubeNotEmbeddable = 'Cette vidéo ne peut être lue que sur YouTube.',
+    this.youtubeError = "Lecture impossible dans l'application.",
   });
 }

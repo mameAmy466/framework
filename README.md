@@ -71,6 +71,7 @@ disponibles…). Chaque valeur donnée ici **remplace** celle de l'API.
 | `pageSize` | Taille des pages des listes | 20 |
 | `strings` | Tous les textes de l'UI (`TveStrings`) | français |
 | `headers` | En-têtes HTTP en plus | aucun |
+| `youtubeOrigin` | Site déclaré à YouTube pour le lecteur intégré (évite les erreurs 152/153) | `branding.website` |
 
 Sections disponibles : `live`, `radio`, `replay`, `shorts`, `news`, `schedule`, `podcasts`, `about`.
 En mode automatique, une section n'apparaît que si l'API déclare la collection

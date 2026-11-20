@@ -90,6 +90,10 @@ class TveConfig {
   /// En-têtes HTTP ajoutés à chaque requête API.
   final Map<String, String> headers;
 
+  /// Site déclaré à YouTube comme intégrant le lecteur (Referer), ex.
+  /// `https://www.ouest.tv`. Défaut : `branding.website` du groupe.
+  final String? youtubeOrigin;
+
   const TveConfig({
     required this.group,
     this.baseUrl = TveClient.defaultBaseUrl,
@@ -106,6 +110,7 @@ class TveConfig {
     this.pageSize = 20,
     this.strings = const TveStrings(),
     this.headers = const {},
+    this.youtubeOrigin,
   });
 
   /// Lit les variables passées au build :
