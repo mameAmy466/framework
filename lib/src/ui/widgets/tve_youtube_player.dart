@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -12,6 +11,7 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../config/tve_strings.dart';
 import '../tve_scope.dart';
+import 'tve_fullscreen.dart';
 
 /// Extrait l'id d'une URL YouTube (watch, embed, shorts, youtu.be) ou renvoie null.
 String? youtubeIdFromUrl(String url) {
@@ -226,23 +226,17 @@ class _WebViewPlayerState extends State<_WebViewPlayer> {
   Future<void> _showFullscreen(Widget widget, void Function() onHidden) async {
     if (_fullscreen) return;
     _fullscreen = true;
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    if (!mounted) return;
-    await Navigator.of(context).push(
-      PageRouteBuilder<void>(
-        opaque: true,
-        pageBuilder: (_, __, ___) => PopScope(
-          onPopInvokedWithResult: (didPop, _) {
-            if (didPop) onHidden();
-          },
-          child: ColoredBox(color: Colors.black, child: widget),
-        ),
+    // Remettre le téléphone à la verticale quitte le plein écran (TveFullscreenPage).
+    await TveFullscreenPage.push(
+      context,
+      PopScope(
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) onHidden();
+        },
+        child: widget,
       ),
     );
     _fullscreen = false;
-    await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   void _hideFullscreen() {

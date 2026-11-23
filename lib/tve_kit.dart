@@ -39,6 +39,7 @@ export 'src/ui/widgets/cards.dart';
 export 'src/ui/widgets/paged_list.dart';
 export 'src/ui/widgets/states.dart';
 export 'src/ui/widgets/tve_audio.dart';
+export 'src/ui/widgets/tve_fullscreen.dart';
 export 'src/ui/widgets/tve_image.dart';
 export 'src/ui/widgets/tve_video_player.dart';
 export 'src/ui/widgets/tve_youtube_player.dart';

@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../api/tve_exception.dart';
 import '../../models/media.dart';
 import 'states.dart';
+import 'tve_fullscreen.dart';
 import 'tve_youtube_player.dart';
 
 /// Lecteur universel basé sur un descripteur de lecture de l'API :
@@ -190,29 +190,27 @@ class _VideoSurfaceState extends State<_VideoSurface> {
     });
   }
 
+  bool _inFullscreen = false;
+
   Future<void> _toggleFullscreen() async {
     if (widget.fullscreen) {
       Navigator.of(context).pop();
       return;
     }
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    if (!mounted) return;
-    await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: _VideoSurface(
-            controller: widget.controller,
-            isLive: widget.isLive,
-            aspectRatio: widget.aspectRatio,
-            fullscreen: true,
-          ),
+    if (_inFullscreen) return;
+    _inFullscreen = true;
+    await TveFullscreenPage.push(
+      context,
+      Center(
+        child: _VideoSurface(
+          controller: widget.controller,
+          isLive: widget.isLive,
+          aspectRatio: widget.aspectRatio,
+          fullscreen: true,
         ),
       ),
-    ));
-    await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    );
+    _inFullscreen = false;
   }
 
   @override
@@ -220,62 +218,69 @@ class _VideoSurfaceState extends State<_VideoSurface> {
     final c = widget.controller;
     final v = c.value;
     final ratio = v.aspectRatio > 0 ? v.aspectRatio : widget.aspectRatio;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        setState(() => _controls = !_controls);
-        if (_controls) _scheduleHide();
+    // Téléphone tourné à l'horizontale pendant la lecture → plein écran.
+    return TveRotationWatcher(
+      enabled: !widget.fullscreen,
+      onLandscape: () {
+        if (widget.controller.value.isPlaying) _toggleFullscreen();
       },
-      child: Stack(fit: StackFit.passthrough, alignment: Alignment.center, children: [
-        Center(child: AspectRatio(aspectRatio: ratio, child: VideoPlayer(c))),
-        if (v.isBuffering) const CircularProgressIndicator(color: Colors.white),
-        AnimatedOpacity(
-          opacity: _controls ? 1 : 0,
-          duration: const Duration(milliseconds: 200),
-          child: IgnorePointer(
-            ignoring: !_controls,
-            child: Container(
-              color: Colors.black38,
-              child: Stack(children: [
-                Center(
-                  child: IconButton(
-                    iconSize: 56,
-                    color: Colors.white,
-                    icon: Icon(v.isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded),
-                    onPressed: () {
-                      v.isPlaying ? c.pause() : c.play();
-                      _scheduleHide();
-                    },
-                  ),
-                ),
-                Positioned(
-                  left: 8,
-                  right: 0,
-                  bottom: 0,
-                  child: Row(children: [
-                    if (widget.isLive)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
-                        child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      )
-                    else
-                      Expanded(
-                        child: VideoProgressIndicator(c, allowScrubbing: true, padding: const EdgeInsets.all(8)),
-                      ),
-                    if (widget.isLive) const Spacer(),
-                    IconButton(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          setState(() => _controls = !_controls);
+          if (_controls) _scheduleHide();
+        },
+        child: Stack(fit: StackFit.passthrough, alignment: Alignment.center, children: [
+          Center(child: AspectRatio(aspectRatio: ratio, child: VideoPlayer(c))),
+          if (v.isBuffering) const CircularProgressIndicator(color: Colors.white),
+          AnimatedOpacity(
+            opacity: _controls ? 1 : 0,
+            duration: const Duration(milliseconds: 200),
+            child: IgnorePointer(
+              ignoring: !_controls,
+              child: Container(
+                color: Colors.black38,
+                child: Stack(children: [
+                  Center(
+                    child: IconButton(
+                      iconSize: 56,
                       color: Colors.white,
-                      icon: Icon(widget.fullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded),
-                      onPressed: _toggleFullscreen,
+                      icon: Icon(v.isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded),
+                      onPressed: () {
+                        v.isPlaying ? c.pause() : c.play();
+                        _scheduleHide();
+                      },
                     ),
-                  ]),
-                ),
-              ]),
+                  ),
+                  Positioned(
+                    left: 8,
+                    right: 0,
+                    bottom: 0,
+                    child: Row(children: [
+                      if (widget.isLive)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
+                          child: const Text('LIVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        )
+                      else
+                        Expanded(
+                          child: VideoProgressIndicator(c, allowScrubbing: true, padding: const EdgeInsets.all(8)),
+                        ),
+                      if (widget.isLive) const Spacer(),
+                      IconButton(
+                        color: Colors.white,
+                        icon: Icon(widget.fullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded),
+                        onPressed: _toggleFullscreen,
+                      ),
+                    ]),
+                  ),
+                ]),
+              ),
             ),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 }

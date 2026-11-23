@@ -18,6 +18,7 @@ dependencies:
   just_audio: ^0.10.0
   youtube_player_iframe: ^5.2.0
   webview_flutter: ^4.10.0
+  sensors_plus: ^7.0.0
   webview_flutter_android: ^4.3.0
   webview_flutter_wkwebview: ^3.18.0
   flutter_widget_from_html_core: ^0.16.0

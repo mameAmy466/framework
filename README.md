@@ -156,6 +156,7 @@ Ce que le client gère tout seul :
 ## 5. Briques réutilisables
 
 `TvePlaybackPlayer` (HLS, audio, YouTube ; redemande une URL fraîche si la signature a expiré),
+`TveFullscreen` / `TveFullscreenPage` (plein écran ; le téléphone remis à la verticale le quitte, tourné à l'horizontale pendant la lecture y entre ; `TveFullscreen.appOrientations` pour une app verrouillée en portrait),
 `TveYoutubePlayer` (lecture dans l'app : lecteur officiel YouTube en WebView avec Referer valide sur Android/iOS, écran de chargement animé, plein écran), `TveAudioController` (lecteur audio global : la radio continue quand on
 change d'onglet), `TvePagedView` (liste ou grille infinie), `TveMediaCard`, `TveImage`, `TveHtml`,
 `TveFuture`, `TveErrorView`, `TveEmptyView`.
