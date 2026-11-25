@@ -25,7 +25,7 @@ class TveAboutScreen extends StatelessWidget {
     void open(String url) =>
         launchUrl(Uri.parse(url.startsWith('http') ? url : 'https://$url'), mode: LaunchMode.externalApplication);
 
-    return ListView(padding: const EdgeInsets.all(16), children: [
+    return ListView(padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + MediaQuery.viewPaddingOf(context).bottom), children: [
       const Center(child: TveLogo(height: 80)),
       const SizedBox(height: 16),
       if (tve.group.aboutHtml != null) TveHtml(tve.group.aboutHtml!),
