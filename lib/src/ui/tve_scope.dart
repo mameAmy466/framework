@@ -55,7 +55,7 @@ class TveScope extends InheritedWidget {
       .replaceAll('{appstore}', appStoreUrl ?? '');
 
   /// Filtre de chaînes de la config (null = toutes).
-  List<String>? get channelFilter => config.channels.isEmpty ? null : config.channels;
+  List<String>? get channelFilter => config.channelFilter;
 
   @override
   bool updateShouldNotify(TveScope old) =>

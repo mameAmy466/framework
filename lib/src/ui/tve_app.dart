@@ -7,6 +7,7 @@ import '../api/tve_client.dart';
 import '../config/tve_config.dart';
 import '../config/tve_design.dart';
 import '../models/group.dart';
+import '../models/json.dart';
 import 'tve_home.dart';
 import 'tve_scope.dart';
 import 'widgets/states.dart';
@@ -57,7 +58,14 @@ class _TveAppState extends State<TveApp> {
     setState(() => _error = null);
     final minDelay = Future<void>.delayed(widget.design.splashMinDuration);
     try {
-      final g = await _api.getGroup();
+      var g = await _api.getGroup();
+      // App d'une chaîne d'un groupe partagé (aCAS) : sa configuration d'app
+      // remplace celle du groupe.
+      final appChannel = widget.config.appChannel;
+      if (appChannel != null) {
+        final ch = await _api.getChannel(appChannel, include: const ['app']);
+        g = g.withChannelApp(asJson(ch.raw['app']));
+      }
       // Préchargement facultatif (ex. contenus de l'accueil), pendant le splash.
       // Une erreur ici n'empêche pas d'ouvrir l'app : les écrans rechargeront.
       final preload = widget.design.preload?.call(_api, g).catchError((Object _) {});

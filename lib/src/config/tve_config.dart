@@ -67,8 +67,16 @@ class TveConfig {
   /// Onglets supplémentaires propres à l'app (ajoutés après les sections).
   final List<TveCustomTab> customTabs;
 
-  /// Chaîne TV mise en avant (slug). Défaut : la première par `order`.
+  /// Chaîne TV mise en avant (slug). Défaut : [appChannel], sinon la première par `order`.
   final String? defaultChannel;
+
+  /// App d'UNE chaîne dans un groupe partagé (ex. aCAS : toutes les chaînes
+  /// sont dans le groupe `acasgroup`). Slug de la chaîne, ex. `ouest-tv`.
+  ///
+  /// - sa configuration d'app (`?include=app` : nom, logo, réseaux, à propos,
+  ///   confidentialité…) remplace celle du groupe ;
+  /// - l'app est limitée à cette chaîne (si [channels] est vide) et la joue en direct.
+  final String? appChannel;
 
   /// Limiter l'app à certaines chaînes (slugs). Vide = toutes.
   final List<String> channels;
@@ -94,6 +102,12 @@ class TveConfig {
   /// `https://www.ouest.tv`. Défaut : `branding.website` du groupe.
   final String? youtubeOrigin;
 
+  /// Chaîne jouée en premier : [defaultChannel], sinon [appChannel].
+  String? get preferredChannel => defaultChannel ?? appChannel;
+
+  /// Chaînes de l'app : [channels], sinon `[appChannel]`, sinon null (toutes).
+  List<String>? get channelFilter => channels.isNotEmpty ? channels : (appChannel == null ? null : [appChannel!]);
+
   const TveConfig({
     required this.group,
     this.baseUrl = TveClient.defaultBaseUrl,
@@ -103,6 +117,7 @@ class TveConfig {
     this.initialSection,
     this.customTabs = const [],
     this.defaultChannel,
+    this.appChannel,
     this.channels = const [],
     this.playStoreUrl,
     this.appStoreUrl,
@@ -125,6 +140,7 @@ class TveConfig {
     const base = String.fromEnvironment('TVE_BASE_URL', defaultValue: TveClient.defaultBaseUrl);
     const name = String.fromEnvironment('TVE_APP_NAME');
     const channel = String.fromEnvironment('TVE_DEFAULT_CHANNEL');
+    const appChannel = String.fromEnvironment('TVE_APP_CHANNEL');
     final group = g.isNotEmpty ? g : fallbackGroup;
     if (group == null || group.isEmpty) {
       throw StateError('TVE_GROUP manquant : --dart-define=TVE_GROUP=<code du groupe>');
@@ -134,6 +150,7 @@ class TveConfig {
       baseUrl: base,
       appName: name.isEmpty ? null : name,
       defaultChannel: channel.isEmpty ? null : channel,
+      appChannel: appChannel.isEmpty ? null : appChannel,
       sections: sections,
       strings: strings,
     );

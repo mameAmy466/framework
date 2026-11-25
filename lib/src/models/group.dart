@@ -36,6 +36,18 @@ class TveGroup {
   /// pour ce groupe (droits + au moins un élément visible).
   bool has(String collection) => collections.any((c) => c.name == collection);
 
+  /// Groupe partagé (ex. aCAS) + configuration d'app propre à une chaîne
+  /// (`GET /channels/{slug}?include=app` → `app`) : ses `branding`, `about`,
+  /// `privacy_policy`, `social` et `mobile` remplacent ceux du groupe.
+  TveGroup withChannelApp(Json app) {
+    if (app.isEmpty) return this;
+    final merged = Map<String, Object?>.of(raw);
+    for (final k in const ['branding', 'about', 'privacy_policy', 'social', 'mobile']) {
+      if (app.containsKey(k) && app[k] != null) merged[k] = app[k];
+    }
+    return TveGroup.fromJson(merged);
+  }
+
   factory TveGroup.fromJson(Json j) => TveGroup(
         code: str(j['code']) ?? '',
         name: str(j['name']) ?? '',

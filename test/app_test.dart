@@ -147,4 +147,58 @@ void main() {
     }
     expect(find.text('HOME'), findsOneWidget);
   });
+
+  testWidgets('appChannel (aCAS) : config d\'app de la chaîne + filtre', (tester) async {
+    Uri? channelUrl;
+    final api = TveClient(
+      group: 'acasgroup',
+      httpClient: MockClient((r) async {
+        final String body;
+        if (r.url.path.endsWith('/channels/ouest-tv')) {
+          channelUrl = r.url;
+          body = jsonEncode({
+            'data': {
+              'type': 'channel',
+              'slug': 'ouest-tv',
+              'name': 'Ouest TV',
+              'kind': 'acas',
+              'url': 'x',
+              'app': {
+                'branding': {'app_name': 'Ouest TV', 'website': 'https://www.ouest.tv'},
+                'social': {'youtube': 'https://www.youtube.com/@chaineouesttv'},
+                'about': '<p>Ouest</p>',
+              },
+            },
+          });
+        } else {
+          body = File('test/fixtures/group.json').readAsStringSync();
+        }
+        return http.Response.bytes(utf8.encode(body), 200, headers: {'content-type': 'application/json'});
+      }),
+    );
+    await tester.pumpWidget(
+      TveApp(
+        client: api,
+        config: const TveConfig(group: 'acasgroup', appChannel: 'ouest-tv'),
+        design: TveDesign(
+          splashMinDuration: Duration.zero,
+          homeBuilder: (context) {
+            final tve = TveScope.of(context);
+            return Text(
+              '${tve.appName}|${tve.group.social.youtube}|${tve.group.aboutHtml}|${tve.channelFilter}|${tve.config.preferredChannel}',
+              textDirection: TextDirection.ltr,
+            );
+          },
+        ),
+      ),
+    );
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 10));
+    }
+    expect(channelUrl?.queryParameters['include'], 'app');
+    expect(
+      find.text('Ouest TV|https://www.youtube.com/@chaineouesttv|<p>Ouest</p>|[ouest-tv]|ouest-tv'),
+      findsOneWidget,
+    );
+  });
 }

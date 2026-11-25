@@ -32,7 +32,7 @@ class _TveLiveScreenState extends State<TveLiveScreen> {
       builder: (context, channels, reload) {
         if (channels.isEmpty) return const TveEmptyView(icon: Icons.live_tv_rounded);
         final current = channels.firstWhere(
-          (c) => c.slug == (_selected ?? tve.config.defaultChannel),
+          (c) => c.slug == (_selected ?? tve.config.preferredChannel),
           orElse: () => channels.first,
         );
         return ListView(children: [

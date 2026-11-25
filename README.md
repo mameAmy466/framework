@@ -64,7 +64,8 @@ disponibles…). Chaque valeur donnée ici **remplace** celle de l'API.
 | `hiddenSections` | Onglets à masquer | aucun |
 | `initialSection` | Onglet ouvert au démarrage | `mobile.default_section` |
 | `customTabs` | Onglets 100 % maison | aucun |
-| `defaultChannel` | Chaîne TV jouée en premier (slug) | la première |
+| `defaultChannel` | Chaîne TV jouée en premier (slug) | `appChannel`, sinon la première |
+| `appChannel` | **aCAS** : app d'une chaîne d'un groupe partagé (`group: 'acasgroup'`, `appChannel: 'ouest-tv'`) — sa config d'app remplace celle du groupe, l'app est limitée à cette chaîne | aucun |
 | `channels` | Limiter l'app à certaines chaînes (slugs) | toutes |
 | `playStoreUrl` / `appStoreUrl` | Liens utilisés dans le partage | construits depuis `mobile.*_app_id` |
 | `shareTemplate` | Texte de partage (`{title}`, `{app}`, `{playstore}`, `{appstore}`) | texte FR |
