@@ -43,16 +43,20 @@ class TveErrorView extends StatelessWidget {
     final e = error;
     final msg = e is TveException
         ? (e.isNetwork ? s.networkError : (e.isPlaybackUnavailable ? s.playbackUnavailable : (e.detail ?? e.title)))
-        : '$e';
+        : null; // erreur technique : pas de détail brut à l'écran (voir la console)
+    if (e is! TveException) debugPrint('TveErrorView: $e');
+    // Défilable : tient dans les petites zones (lecteur 16:9, rangées…).
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Icon(Icons.wifi_off_rounded, size: 48, color: Theme.of(context).colorScheme.error),
           const SizedBox(height: 12),
           Text(s.errorTitle, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 4),
-          Text(msg, textAlign: TextAlign.center),
+          if (msg != null) ...[
+            const SizedBox(height: 4),
+            Text(msg, textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis),
+          ],
           if (onRetry != null) ...[
             const SizedBox(height: 16),
             FilledButton.tonal(onPressed: onRetry, child: Text(s.retry)),
